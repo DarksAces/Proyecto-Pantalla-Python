@@ -1,175 +1,117 @@
-﻿Proyecto: Editor Interactivo de Imágenes y Texto con Pygame
+﻿# Proyecto: Editor Interactivo de Imágenes y Texto con Pygame
 
-Descripción:
+## Descripción
 
-Este proyecto es un editor interactivo desarrollado en Python con Pygame. Permite:
+Este proyecto es un **editor interactivo** desarrollado en Python con Pygame. Permite:
 
-Cargar y mostrar imágenes.
+- Cargar y mostrar imágenes.
+- Mover y redimensionar imágenes movibles con el ratón.
+- Editar texto directamente en la ventana gráfica, línea por línea.
 
-Mover y redimensionar imágenes movibles con el ratón.
+El editor demuestra cómo manejar **múltiples objetos gráficos**, detectar colisiones y aplicar transformaciones en **tiempo real** dentro de Pygame.
 
-Editar texto directamente en la ventana gráfica, línea por línea.
+---
 
-El editor demuestra cómo manejar múltiples objetos gráficos, detectar colisiones y aplicar transformaciones en tiempo real dentro de Pygame.
+## Funcionalidades implementadas
 
-Funcionalidades implementadas:
+- **Carga automática de imágenes:** Desde la carpeta `imagenes/` relativa al script.
+- **Control de movibilidad:** Cada imagen puede ser movible o fija.
+- **Interacción con ratón:**
+  - **Click izquierdo:** Arrastra y mueve imágenes movibles.
+  - **Click derecho:** Redimensiona imágenes movibles manteniendo proporciones.
+- **Escalado dinámico:** Cada imagen mantiene su escala independiente.
+- **Detección de colisiones:** Solo la imagen bajo el cursor responde a la interacción.
+- **Límites de ventana:** Las imágenes no pueden salirse de los márgenes.
+- **Edición de texto:** Las líneas marcadas como editables permiten escribir, borrar y agregar saltos de línea.
+- **Cursor dinámico:** Muestra la posición actual dentro del texto editable.
 
-Carga automática de imágenes desde la carpeta imagenes/ relativa al script.
+---
 
-Control de movibilidad: cada imagen puede ser movible o fija.
-
-Interacción con ratón:
-
-Click izquierdo: arrastra y mueve imágenes movibles.
-
-Click derecho: redimensiona imágenes movibles manteniendo proporciones.
-
-Escalado dinámico: cada imagen mantiene su escala independiente.
-
-Detección de colisiones: solo la imagen bajo el cursor responde a la interacción.
-
-Límites de ventana: las imágenes no pueden salirse de los márgenes.
-
-Edición de texto: las líneas marcadas como editables permiten escribir, borrar y agregar saltos de línea.
-
-Cursor dinámico: muestra la posición actual dentro del texto editable.
-
-Configuración de imágenes:
+## Configuración de imágenes
 
 Se definen en una lista de diccionarios:
 
+```python
 images = [
-
-{
-
-"surface": pygame.image.load("imagenes/imagen.png"), # Superficie de Pygame
-
-"pos": [x, y], # Posición en pantalla
-
-"movible": True/False, # Si se puede mover/redimensionar
-
-"scale": 1.0 # Escala (1 = tamaño original)
-
-}
-
+    {
+        "surface": pygame.image.load("imagenes/imagen.png"),  # Superficie de Pygame
+        "pos": [x, y],                                        # Posición en pantalla
+        "movible": True/False,                                # Si se puede mover/redimensionar
+        "scale": 1.0                                          # Escala (1 = tamaño original)
+    }
 ]
-
-Ejemplo de configuración:
-
+```
+```python
 images = [
-
-{"surface": pygame.image.load("img1.png"), "pos": [50, 100], "movible": False, "scale": 0.5},
-
-{"surface": pygame.image.load("img2.png"), "pos": [300, 200], "movible": True, "scale": 0.5},
-
+    {"surface": pygame.image.load("img1.png"), "pos": [50, 100], "movible": False, "scale": 0.5},
+    {"surface": pygame.image.load("img2.png"), "pos": [300, 200], "movible": True, "scale": 0.5},
 ]
+```
 
-Controles:
+# Controles 
+| Acción         | Control                     | Descripción                                            |
+| -------------- | --------------------------- | ------------------------------------------------------ |
+| Mover imagen   | Click izquierdo + arrastrar | Mueve la imagen seleccionada (solo si es movible)      |
+| Redimensionar  | Click derecho + arrastrar   | Cambia el tamaño de la imagen manteniendo proporciones |
+| Escribir texto | Teclado                     | Inserta texto en la línea editable                     |
+| Salir          | Cerrar ventana              | Termina la aplicación                                  |
 
-Mover imagen: Click izquierdo + arrastrar → mueve la imagen seleccionada (solo si es movible).
+# Estructura del código
 
-Redimensionar: Click derecho + arrastrar → cambia el tamaño de la imagen manteniendo proporciones.
+ - images : Lista de diccionarios con todas las imágenes y sus propiedades.
 
-Escribir texto: teclado → inserta texto en la línea editable.
+ - Variables de arrastre y escalado
 
-Salir: cerrar ventana → termina la aplicación.
+ - dragging_image: referencia a la imagen actualmente manipulada.
 
-Estructura del código:
+ - offset: compensación para un arrastre suave.
 
-images: lista de diccionarios con todas las imágenes y sus propiedades.
+- resizing: bandera que indica si se está redimensionando.
 
-Variables de arrastre y escalado:
+- Variables de texto
 
-dragging\_image: referencia a la imagen actualmente manipulada.
+- lines: lista de líneas de texto, cada una con fragmentos y bandera editable.
 
-offset: compensación para un arrastre suave.
+- cursor_row, cursor_col: posición del cursor dentro del texto editable.
 
-resizing: bandera que indica si se está redimensionando.
+- **Funciones principales**
 
-Variables de texto:
+- draw_text(): renderiza todas las líneas de texto y el cursor.
 
-lines: lista de líneas de texto, cada una con fragmentos y bandera editable.
+- Renderizado de imágenes: escala y dibuja imágenes según su propiedad scale y posición.
 
-cursor\_row, cursor\_col: posición del cursor dentro del texto editable.
+- Manejo de eventos: detecta clicks, arrastre, redimensionado y escritura de texto.
 
-Funciones principales:
+- Sistema de colisiones: solo la imagen bajo el cursor responde a interacciones.
 
-draw\_text(): renderiza todas las líneas de texto y el cursor.
+- **Limitaciones**
 
-Renderizado de imágenes: escala y dibuja imágenes según su propiedad scale y posición.
+- Solo soporta formatos de imagen compatibles con Pygame (PNG, JPG, BMP, etc.).
 
-Manejo de eventos: detecta clicks, arrastre, redimensionado y escritura de texto.
+- No hay funcionalidad de guardar o exportar el estado.
 
-Sistema de colisiones: solo la imagen bajo el cursor responde a interacciones.
+- No se pueden rotar las imágenes.
 
-Limitaciones:
+- Sin soporte de capas o agrupación avanzada de imágenes.
 
-Solo soporta formatos de imagen compatibles con Pygame (PNG, JPG, BMP, etc.).
+- Redimensionado basado en posición del ratón, no en handles visuales.
 
-No hay funcionalidad de guardar o exportar el estado.
+- No hay historial de deshacer/rehacer.
 
-No se pueden rotar las imágenes.
+- **Mejoras posibles**
 
-Sin soporte de capas o agrupación avanzada de imágenes.
+- Handles de redimensionado visibles en las esquinas.
 
-Redimensionado basado en posición del ratón, no en handles visuales.
+- Rotación de imágenes mediante teclado o ratón.
 
-No hay historial de deshacer/rehacer.
+- Sistema de capas para organizar imágenes por profundidad.
 
-Estructura de archivos:
+- Guardar proyecto como imagen o archivo de estado.
 
-proyecto/
+- Herramientas adicionales: recorte, filtros, efectos, transparencia.
 
-├── editor\_imagenes.py # Archivo principal
+- Panel de propiedades de imagen para modificar escala y posición.
 
-└── imagenes/ # Carpeta de imágenes
+- Soporte de GIF animados u otros formatos especiales.
 
-├── img1.png
-
-├── img2.png
-
-└── ...
-
-Mejoras posibles:
-
-Handles de redimensionado visibles en las esquinas.
-
-Rotación de imágenes mediante teclado o ratón.
-
-Sistema de capas para organizar imágenes por profundidad.
-
-Guardar proyecto como imagen o archivo de estado.
-
-Herramientas adicionales: recorte, filtros, efectos, transparencia.
-
-Panel de propiedades de imagen para modificar escala y posición.
-
-Soporte de GIF animados u otros formatos especiales.
-
-Deshacer/Rehacer para revertir acciones en texto o imágenes.
-
-Dependencias:
-
-Python 3.10+
-
-Pygame
-
-Instalación:
-
-pip install pygame
-
-Uso:
-
-Crear una carpeta imagenes/ en el mismo directorio que el script.
-
-Colocar las imágenes deseadas en la carpeta (img1.png, img2.png, etc.).
-
-Ejecutar el script:
-
-python editor\_imagenes.py
-
-Usar click izquierdo para mover imágenes movibles.
-
-Usar click derecho para redimensionar imágenes movibles.
-
-Escribir en las líneas de texto editables con el teclado.
+- Deshacer/Rehacer para revertir acciones en texto o imágenes.
